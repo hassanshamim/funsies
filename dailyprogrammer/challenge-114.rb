@@ -1,4 +1,6 @@
-  #Calculates letter difference between two words.  google levenshtein for info
+#This challenge is to create a word bridge from any two words in the four-letter word dictionary provided
+
+#Calculates letter difference between two words.  google levenshtein for info
 def levenshtein(a, b)
   case
     when a.empty? then b.length
@@ -17,31 +19,26 @@ def ladder(word1, word2)
   build_bridge(word1, word2, words)
 end
 
-  #right now this is DFS, I need to implement a queue to make it a BFS
 def build_bridge( seed, target, dict )
   queue = []
   hash_table = {}
   current = seed
   #breadth first search, goes until it finds target word
   until current == target
-        puts "working on word #{current}"
-        neighbors = dict.select{ |entry| levenshtein( current, entry ) == 1 }
-        hash_table[current] = neighbors
-        queue += neighbors - hash_table.keys
-    #current = queue.shift
+    puts "working on word #{current}"
+    neighbors = dict.select{ |entry| levenshtein( current, entry ) == 1 }
+    hash_table[current] = neighbors
+    queue += neighbors - hash_table.keys
     current = queue.shift while hash_table.has_key?( current ) #haven't tested this way
   end
 
   bridge = [target]
-#  until current == seed
-#     current == bridge.last
-#    bridge.push( hash_table.select{|k, v| v.include?(current)})
-#  end
 
   until bridge.last == seed
     hash_table.inject( bridge ) do | bridge, (key, values) |
       values.include?( bridge.last ) ? bridge << key : bridge
     end
   end
+
   puts bridge.reverse
 end
