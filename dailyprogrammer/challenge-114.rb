@@ -1,3 +1,4 @@
+  #Calculates letter difference between two words.  google levenshtein for info
 def levenshtein(a, b)
   case
     when a.empty? then b.length
@@ -13,13 +14,34 @@ def ladder(word1, word2)
   doc = File.open('selected_four-letter_words.txt')
   words = doc.readlines.map(&:chomp)
   doc.close
+  build_bridge(word1, word2, words)
 end
 
   #right now this is DFS, I need to implement a queue to make it a BFS
-def build_paths( seed, hash_table, word_list )
-  puts "working on word #{seed}"
-  hash_table[seed] = word_list.select{ |word| levenshtein(seed, word) == 1 }
-  hash_table[seed].each do |neighbor|
-      build_paths(neighbor, hash_table, word_list ) unless hash_table[neighbor]
+def build_bridge( seed, target, dict )
+  queue = []
+  hash_table = {}
+  current = seed
+  #breadth first search, goes until it finds target word
+  until current == target
+        puts "working on word #{current}"
+        neighbors = dict.select{ |entry| levenshtein( current, entry ) == 1 }
+        hash_table[current] = neighbors
+        queue += neighbors - hash_table.keys
+    #current = queue.shift
+    current = queue.shift while hash_table.has_key?( current ) #haven't tested this way
   end
+
+  bridge = [target]
+#  until current == seed
+#     current == bridge.last
+#    bridge.push( hash_table.select{|k, v| v.include?(current)})
+#  end
+
+  until bridge.last == seed
+    hash_table.inject( bridge ) do | bridge, (key, values) |
+      values.include?( bridge.last ) ? bridge << key : bridge
+    end
+  end
+  puts bridge.reverse
 end
