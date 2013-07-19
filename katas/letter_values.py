@@ -6,13 +6,12 @@ class LetterValue(object):
     """Simple class which contains a dict of letter values, as well as a
         _get_value(s) method to convert the letter to it's integer value and
         a convert(word) method which returns the total value of a string"""
-    alphabet = list(' ' + ascii_lowercase)
-    numbers = range(len(alphabet))     #[0, 1, 2, 3, etc]
-    values = dict(zip(alphabet, numbers))   #{' ': 0,  'a':1, 'b': 2, etc }
+
+    values = { char:i for i, char in enumerate(' ' + ascii_lowercase) }
 
     def _get_value(self, letter):
         """return the value of a upper or lowercase letter or space"""
-        return self.values.get(letter.lower())
+        return self.values.get(letter.lower(), 0)
 
     def convert(self, word):
         """returns the sum of the letter values in a string"""
